@@ -23,17 +23,21 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 async def chat_endpoint(req: ChatRequest):
     try:
+        formatted = [
+            {"role": "user" if m.sender == "user" else "assistant", "content": m.text}
+            for m in req.messages
+        ]
+
         response = requests.post(
             "http://localhost:11434/api/chat",
             json={
-                "model": "llama3.2-vision:latest",
-                "messages": [{"role": "user", "content": req.message}],
+                "model": "llama3.2:latest",
+                "messages": formatted,
                 "stream": False
             }
         )
         response.raise_for_status()
         result = response.json()
-        
         return {"response": result["message"]["content"]}
     except Exception as e:
         return {"error": str(e)}
