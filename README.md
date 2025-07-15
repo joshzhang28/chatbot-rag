@@ -94,3 +94,19 @@ Visit [http://localhost:5173](http://localhost:5173)
 Type a message like: Hello, what can you do?
 The chatbot will respond using the local AI model (no internet needed)
 
+## Future Development
+
+### Backend
+- [ ] Enable in-memory chat history
+  - Maintain context during the session by storing the full conversation.
+- [ ] Build persistent memory with PostgreSQL
+  - Store and retrieve chat history locally for long-term memory support.
+- [ ] Implement RAG (Retrieval-Augmented Generation)
+  - Fetch relevant information from documents or knowledge base to enhance responses.
+- [ ] Enable PDF input for RAG
+  - Allow user-uploaded PDF files to be parsed and indexed for retrieval.
+
+### Frontend
+- [ ] Set a maximum width for the chat UI
+  - Prevent the chat interface from stretching too wide on large screens for better readability.
+
