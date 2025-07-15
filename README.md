@@ -97,7 +97,7 @@ The chatbot will respond using the local AI model (no internet needed)
 ## Future Development
 
 ### Backend
-- [ ] Enable in-memory chat history
+- [x] Enable in-memory chat history
   - Maintain context during the session by storing the full conversation.
 - [ ] Build persistent memory with PostgreSQL
   - Store and retrieve chat history locally for long-term memory support.

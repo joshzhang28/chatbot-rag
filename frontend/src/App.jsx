@@ -10,18 +10,26 @@ function App() {
     if (!input.trim()) return;
 
     const userMessage = { sender: 'user', text: input };
-    setMessages((prev) => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
 
     try {
-      const res = await axios.post('http://localhost:8000/chat', { message: input });
+      const res = await axios.post('http://localhost:8000/chat', {
+        messages: updatedMessages,
+      });
+
       const botMessage = { sender: 'bot', text: res.data.response };
       setMessages((prev) => [...prev, botMessage]);
     } catch (err) {
-      setMessages((prev) => [...prev, { sender: 'bot', text: 'Error: ' + err.message }]);
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'bot', text: 'Error: ' + err.message },
+      ]);
     }
 
     setInput('');
   };
+
 
   return (
     <div className="chat-container">
