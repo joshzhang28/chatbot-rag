@@ -1,21 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import { v4 as uuidv4 } from 'uuid';
 
 function App() {
-  const [input, setInput] = useState('');
+  const [sessionId, setSessionId] = useState('');
   const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+
+  useEffect(() => {
+    const id = uuidv4();
+    setSessionId(id);
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage = { sender: 'user', text: input };
-    const updatedMessages = [...messages, userMessage];
-    setMessages(updatedMessages);
+    setMessages((prev) => [...prev, userMessage]);
+
+    console.log("Sending to backend:", {
+      session_id: sessionId,
+      message: input
+    });
 
     try {
       const res = await axios.post('http://localhost:8000/chat', {
-        messages: updatedMessages,
+        session_id: sessionId,
+        message: input
       });
 
       const botMessage = { sender: 'bot', text: res.data.response };
@@ -23,7 +35,7 @@ function App() {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { sender: 'bot', text: 'Error: ' + err.message },
+        { sender: 'bot', text: 'Error: ' + err.message }
       ]);
     }
 

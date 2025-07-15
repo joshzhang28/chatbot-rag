@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import requests
 from typing import List
+import requests
+
+from jobs import get_job
 
 app = FastAPI()
 
@@ -18,26 +20,32 @@ class Message(BaseModel):
     text: str
 
 class ChatRequest(BaseModel):
-    messages: List[Message]
+    session_id: str
+    message: str
 
 @app.post("/chat")
 async def chat_endpoint(req: ChatRequest):
     try:
-        formatted = [
-            {"role": "user" if m.sender == "user" else "assistant", "content": m.text}
-            for m in req.messages
-        ]
+        job = get_job(req.session_id)
+
+        # Add user's message
+        job.add_message("user", req.message)
 
         response = requests.post(
             "http://localhost:11434/api/chat",
             json={
                 "model": "llama3.2:latest",
-                "messages": formatted,
+                "messages": job.get_history(),
                 "stream": False
             }
         )
         response.raise_for_status()
         result = response.json()
+
+        # Add bot response to history
+        job.add_message("assistant", result["message"]["content"])
+
         return {"response": result["message"]["content"]}
+
     except Exception as e:
         return {"error": str(e)}
