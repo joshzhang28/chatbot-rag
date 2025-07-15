@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import requests
+from typing import List
 
 app = FastAPI()
 
@@ -12,8 +13,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class Message(BaseModel):
+    sender: str
+    text: str
+
 class ChatRequest(BaseModel):
-    message: str
+    messages: List[Message]
 
 @app.post("/chat")
 async def chat_endpoint(req: ChatRequest):
